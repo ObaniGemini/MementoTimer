@@ -1,0 +1,539 @@
+[gd_scene load_steps=7 format=3 uid="uid://bylku65gmosew"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_ke31s"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_aom76"]
+
+[sub_resource type="Animation" id="Animation_aiaqj"]
+resource_name = "bounce"
+length = 0.25
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(0.25, 1),
+"update": 0,
+"values": [Vector2(1.25, 1.25), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(0.25, 1),
+"update": 0,
+"values": [Vector2(-64, -64), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pbbjj"]
+_data = {
+"bounce": SubResource("Animation_aiaqj")
+}
+
+[sub_resource type="LabelSettings" id="LabelSettings_u2fpg"]
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jqbiv"]
+bg_color = Color(0, 0, 0, 0.784314)
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+script = ExtResource("1_ke31s")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="Display" type="Control" parent="."]
+custom_minimum_size = Vector2(512, 512)
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="Background" type="Polygon2D" parent="Display"]
+modulate = Color(0, 0, 0, 1)
+polygon = PackedVector2Array(0, 0, 0, 512, 512, 512, 512, 0)
+
+[node name="Label" type="Label" parent="Display"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+text = "23:00"
+label_settings = SubResource("LabelSettings_aom76")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Count" type="Label" parent="Display"]
+custom_minimum_size = Vector2(1024, 256)
+layout_mode = 0
+offset_top = 256.0
+offset_right = 1024.0
+offset_bottom = 768.0
+scale = Vector2(0.5, 0.5)
+text = "1/8"
+label_settings = SubResource("LabelSettings_aom76")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Paused" type="Label" parent="Display"]
+modulate = Color(0.588235, 0.588235, 0.588235, 0.392157)
+custom_minimum_size = Vector2(1024, 256)
+layout_mode = 0
+offset_right = 2048.0
+offset_bottom = 1024.0
+scale = Vector2(0.25, 0.25)
+text = "paused"
+label_settings = SubResource("LabelSettings_aom76")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Bounce" type="AnimationPlayer" parent="Display"]
+libraries = {
+"": SubResource("AnimationLibrary_pbbjj")
+}
+
+[node name="TimeUp" type="AudioStreamPlayer" parent="Display"]
+
+[node name="ChangeTask" type="AudioStreamPlayer" parent="Display"]
+
+[node name="Pause" type="AudioStreamPlayer" parent="Display"]
+
+[node name="Menu" type="Control" parent="."]
+custom_minimum_size = Vector2(512, 512)
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="Panel" type="Panel" parent="Menu"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Menu"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/ScrollContainer"]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Menu/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Time" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Time"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Time"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Time"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Minutes" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer/Minutes"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Minutes: "
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer/Minutes"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 1.0
+max_value = 99.0
+value = 1.0
+
+[node name="Tasks" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer/Tasks"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Tasks:"
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer/Tasks"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 1.0
+value = 1.0
+
+[node name="Seconds" type="CheckBox" parent="Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "Display seconds"
+
+[node name="HSeparator2" type="HSeparator" parent="Menu/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Font" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Font"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Font"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Font" type="Button" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/outline_size = 8
+text = "Path:"
+
+[node name="FontSize" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/FontSize"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Size"
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/FontSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 16.0
+max_value = 160.0
+step = 4.0
+value = 16.0
+
+[node name="FontColor" type="ColorPickerButton" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+process_mode = 3
+custom_minimum_size = Vector2(380, 32)
+layout_mode = 2
+edit_alpha = false
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/FontColor"]
+custom_minimum_size = Vector2(380, 32)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Color"
+label_settings = SubResource("LabelSettings_u2fpg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OutlineSize" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/OutlineSize"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Outline Size"
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/OutlineSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 64.0
+
+[node name="OutlineColor" type="ColorPickerButton" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+process_mode = 3
+custom_minimum_size = Vector2(380, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/OutlineColor"]
+custom_minimum_size = Vector2(380, 32)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Outline Color"
+label_settings = SubResource("LabelSettings_u2fpg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ShadowSize" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/ShadowSize"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Shadow Size"
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/ShadowSize"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 128.0
+
+[node name="ShadowOffset" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/ShadowOffset"]
+custom_minimum_size = Vector2(192, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Shadow Offset"
+vertical_alignment = 1
+
+[node name="HSliderX" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/ShadowOffset"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = -32.0
+max_value = 32.0
+
+[node name="HSliderY" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/ShadowOffset"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = -32.0
+max_value = 32.0
+
+[node name="ShadowColor" type="ColorPickerButton" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer"]
+process_mode = 3
+custom_minimum_size = Vector2(380, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/ShadowColor"]
+custom_minimum_size = Vector2(380, 32)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Shadow Color"
+label_settings = SubResource("LabelSettings_u2fpg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator3" type="HSeparator" parent="Menu/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Background" type="ColorPickerButton" parent="Menu/ScrollContainer/VBoxContainer"]
+process_mode = 3
+custom_minimum_size = Vector2(512, 32)
+layout_mode = 2
+edit_alpha = false
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Background"]
+custom_minimum_size = Vector2(512, 32)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Background Color"
+label_settings = SubResource("LabelSettings_u2fpg")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator4" type="HSeparator" parent="Menu/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Sound"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Volume" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(372, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Volume"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+text = "Volume"
+
+[node name="HSlider" type="HSlider" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Volume"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -50.0
+max_value = 12.0
+step = 0.0
+exp_edit = true
+
+[node name="TimeUp" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(372, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/TimeUp"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+text = "Time up"
+
+[node name="Button" type="Button" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/TimeUp"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Test" type="Button" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/TimeUp"]
+layout_mode = 2
+text = "Test"
+
+[node name="ChangeTask" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(372, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/ChangeTask"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+text = "Change Task"
+
+[node name="Button" type="Button" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/ChangeTask"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Test" type="Button" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/ChangeTask"]
+layout_mode = 2
+text = "Test"
+
+[node name="Pause" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(372, 32)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Pause"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+text = "Pause"
+
+[node name="Button" type="Button" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Pause"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Test" type="Button" parent="Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Pause"]
+layout_mode = 2
+text = "Test"
+
+[node name="HSeparator5" type="HSeparator" parent="Menu/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Keybinds" type="HBoxContainer" parent="Menu/ScrollContainer/VBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Menu/ScrollContainer/VBoxContainer/Keybinds"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_vertical = 1
+text = "Keybinds"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menu/ScrollContainer/VBoxContainer/Keybinds"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ShowMenu" type="Button" parent="Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/outline_size = 8
+text = "Show menu:"
+
+[node name="PauseTimer" type="Button" parent="Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/outline_size = 8
+text = "Pause/Reset Timer:"
+
+[node name="CompleteTask" type="Button" parent="Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/outline_size = 8
+text = "Complete Task:"
+
+[node name="RemoveTask" type="Button" parent="Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_constants/outline_size = 8
+text = "Remove Task:"
+
+[node name="PressKey" type="Panel" parent="Menu"]
+visible = false
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 2
+offset_right = 512.0
+offset_bottom = 512.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jqbiv")
+
+[node name="Label" type="Label" parent="Menu/PressKey"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Press a key"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FontDialog" type="FileDialog" parent="Menu"]
+title = "Open a File"
+size = Vector2i(512, 512)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.ttf", "*.otf")
+
+[node name="TimeUpDialog" type="FileDialog" parent="Menu"]
+auto_translate_mode = 1
+title = "Open a File"
+size = Vector2i(512, 512)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.wav", "*.ogg", "*.mp3", "*.opus")
+
+[node name="ChangeTaskDialog" type="FileDialog" parent="Menu"]
+auto_translate_mode = 1
+title = "Open a File"
+size = Vector2i(512, 512)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.wav", "*.ogg", "*.mp3", "*.opus")
+
+[node name="PauseDialog" type="FileDialog" parent="Menu"]
+auto_translate_mode = 1
+title = "Open a File"
+size = Vector2i(512, 512)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.wav", "*.ogg", "*.mp3", "*.opus")
