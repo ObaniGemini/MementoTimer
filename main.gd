@@ -42,7 +42,7 @@ const DEFAULT_CONFIG := {
 	FONT_SHADOW_OFFSET_Y: 1.0,
 	
 	KEY_EXIT: KEY_ESCAPE,
-	KEY_MENU: KEY_INSERT,
+	KEY_MENU: KEY_END,
 	KEY_PAUSE: KEY_DELETE,
 	KEY_DECREMENT: KEY_KP_SUBTRACT,
 	KEY_INCREMENT: KEY_KP_ADD,
@@ -290,11 +290,14 @@ func clear_timer():
 
 var count := 0
 func update_count():
+	$Display/Count.visible = config[NUM_TASKS] > 0
 	$Display/Count.text = str(count) + "/" + str(config[NUM_TASKS])
 
 func add_count(i : int):
 	count = clampi(count + i, 0, config[NUM_TASKS])
 	$Display/ChangeTask.play()
+	$Display/Bounce.stop()
+	$Display/BounceCount.play("bounce_count")
 	update_count()
 
 
