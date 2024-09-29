@@ -59,6 +59,8 @@ var config := {}
 
 const CONFIG_FILE := "res://MementoTimer.config"
 
+var current_font : FontFile = null
+
 func set_dictionary(c: Dictionary, default: Dictionary):
 	if c == null:
 		c = default.duplicate(true)
@@ -95,10 +97,29 @@ func set_config(c: String, v):
 	update()
 	save_config()
 
+
+
+
 func key_name(code: Key) -> String:
 	var k := InputEventKey.new()
 	k.physical_keycode = code
 	return k.as_text().replace(" (Physical)", "")
+
+func update_file(cfg: String, text_object, resource):
+	if resource == null or resource.resource_path != config[cfg].get_file():
+		text_object.text = config[cfg].get_file()
+		return true
+	return false
+
+func update_sound(cfg: String, text_object, sound: AudioStreamPlayer):
+	if update_file(cfg, text_object, sound.stream):
+		var n : String = config[cfg]
+		if n.ends_with(".ogg"):
+			sound.stream = AudioStreamOggVorbis.load_from_file(n)
+		else:
+			print("File wasn't .ogg, thus couldn't be loaded")
+
+
 
 func update():
 	### Minutes
@@ -127,9 +148,9 @@ func update():
 	$Menu/ScrollContainer/VBoxContainer/Time/VBoxContainer/Seconds.button_pressed = config[DISPLAY_SECONDS]
 	
 	### Font path
-	if $Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/Font.text != config[FONT_PATH]:
-		$Display/Label.label_settings.font = load(config[FONT_PATH])
-		$Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/Font.text = config[FONT_PATH]
+	if update_file(FONT_PATH, $Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/Font, $Display/Label.label_settings.font):
+		$Display/Label.label_settings.font = FontFile.new()
+		$Display/Label.label_settings.font.load_dynamic_font(config[FONT_PATH])
 	
 	### Font size/color
 	$Menu/ScrollContainer/VBoxContainer/Font/VBoxContainer/FontSize/Label.text = "Size: " + str(config[FONT_SIZE])
@@ -166,17 +187,9 @@ func update():
 	AudioServer.set_bus_volume_db(0, config[SOUND_VOLUME])
 	$Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Volume/HSlider.value = config[SOUND_VOLUME]
 	
-	if $Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/TimeUp/Button.text != config[SOUND_TIME_UP]:
-		$Display/TimeUp.stream = load(config[SOUND_TIME_UP])
-		$Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/TimeUp/Button.text = config[SOUND_TIME_UP]
-	
-	if $Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/ChangeTask/Button.text != config[SOUND_CHANGE_TASK]:
-		$Display/ChangeTask.stream = load(config[SOUND_CHANGE_TASK])
-		$Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/ChangeTask/Button.text = config[SOUND_CHANGE_TASK]
-	
-	if $Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Pause/Button.text != config[SOUND_PAUSE]:
-		$Display/Pause.stream = load(config[SOUND_PAUSE])
-		$Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Pause/Button.text = config[SOUND_PAUSE]
+	update_sound(SOUND_TIME_UP, $Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/TimeUp/Button, $Display/TimeUp)
+	update_sound(SOUND_CHANGE_TASK, $Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/ChangeTask/Button, $Display/ChangeTask)
+	update_sound(SOUND_PAUSE, $Menu/ScrollContainer/VBoxContainer/HBoxContainer/VBoxContainer/Pause/Button, $Display/Pause)
 	
 	### Background color
 	$Menu/ScrollContainer/VBoxContainer/Background.color = config[BACKGROUND_COLOR]

@@ -512,6 +512,7 @@ title = "Open a File"
 size = Vector2i(512, 512)
 ok_button_text = "Open"
 file_mode = 0
+access = 2
 filters = PackedStringArray("*.ttf", "*.otf")
 
 [node name="TimeUpDialog" type="FileDialog" parent="Menu"]
@@ -520,7 +521,8 @@ title = "Open a File"
 size = Vector2i(512, 512)
 ok_button_text = "Open"
 file_mode = 0
-filters = PackedStringArray("*.wav", "*.ogg", "*.mp3", "*.opus")
+access = 2
+filters = PackedStringArray("*.ogg")
 
 [node name="ChangeTaskDialog" type="FileDialog" parent="Menu"]
 auto_translate_mode = 1
@@ -528,7 +530,8 @@ title = "Open a File"
 size = Vector2i(512, 512)
 ok_button_text = "Open"
 file_mode = 0
-filters = PackedStringArray("*.wav", "*.ogg", "*.mp3", "*.opus")
+access = 2
+filters = PackedStringArray("*.ogg")
 
 [node name="PauseDialog" type="FileDialog" parent="Menu"]
 auto_translate_mode = 1
@@ -536,4 +539,5 @@ title = "Open a File"
 size = Vector2i(512, 512)
 ok_button_text = "Open"
 file_mode = 0
-filters = PackedStringArray("*.wav", "*.ogg", "*.mp3", "*.opus")
+access = 2
+filters = PackedStringArray("*.ogg")
