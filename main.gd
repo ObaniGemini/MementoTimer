@@ -13,7 +13,6 @@ const FONT_SHADOW_SIZE := "font_shadow_size"
 const FONT_SHADOW_COLOR := "font_shadow_color"
 const FONT_SHADOW_OFFSET_X := "font_shadow_offset_x"
 const FONT_SHADOW_OFFSET_Y := "font_shadow_offset_y"
-const KEY_EXIT := "key_exit"
 const KEY_MENU := "key_menu"
 const KEY_PAUSE := "key_pause"
 const KEY_INCREMENT := "key_increment"
@@ -26,7 +25,8 @@ const SOUND_PAUSE := "sound_pause"
 
 const BACKGROUND_COLOR := "background_color"
 
-const DEFAULT_CONFIG := {
+### should be const but functions aren't
+var DEFAULT_CONFIG := {
 	MINUTES: 25.0,
 	DISPLAY_SECONDS: true,
 	NUM_TASKS: 8.0,
@@ -41,11 +41,10 @@ const DEFAULT_CONFIG := {
 	FONT_SHADOW_OFFSET_X: 1.0,
 	FONT_SHADOW_OFFSET_Y: 1.0,
 	
-	KEY_EXIT: KEY_ESCAPE,
-	KEY_MENU: KEY_END,
-	KEY_PAUSE: KEY_DELETE,
-	KEY_DECREMENT: KEY_KP_SUBTRACT,
-	KEY_INCREMENT: KEY_KP_ADD,
+	KEY_MENU: OS.get_keycode_string(KEY_ESCAPE),
+	KEY_PAUSE: OS.get_keycode_string(KEY_DELETE),
+	KEY_DECREMENT: OS.get_keycode_string(KEY_KP_SUBTRACT),
+	KEY_INCREMENT: OS.get_keycode_string(KEY_KP_ADD),
 	
 	SOUND_VOLUME: 0.0,
 	SOUND_TIME_UP: "res://timeup.ogg",
@@ -74,7 +73,7 @@ func load_config():
 	var f := FileAccess.open(CONFIG_FILE, FileAccess.READ)
 	
 	if f != null:
-		config = f.get_var()
+		config = str_to_var(f.get_as_text())
 		f.close()
 	
 	if config.is_empty():
@@ -89,7 +88,7 @@ func load_config():
 func save_config():
 	var f := FileAccess.open(CONFIG_FILE, FileAccess.WRITE)
 	if f != null:
-		f.store_var(config)
+		f.store_string(var_to_str(config))
 		f.close()
 
 func set_config(c: String, v):
@@ -178,10 +177,10 @@ func update():
 	$Display/Label.label_settings.shadow_color = config[FONT_SHADOW_COLOR]
 	$Display/Label.label_settings.shadow_offset = Vector2(config[FONT_SHADOW_OFFSET_X], config[FONT_SHADOW_OFFSET_Y])
 	### Keybinds
-	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/ShowMenu.text = "Show menu: " + key_name(config[KEY_MENU])
-	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/PauseTimer.text = "Pause/Reset Timer: " + key_name(config[KEY_PAUSE])
-	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/CompleteTask.text = "Complete task: " + key_name(config[KEY_INCREMENT])
-	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/RemoveTask.text = "Remove task: " + key_name(config[KEY_DECREMENT])
+	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/ShowMenu.text = "Show menu: " + config[KEY_MENU]
+	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/PauseTimer.text = "Pause/Reset Timer: " + config[KEY_PAUSE]
+	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/CompleteTask.text = "Complete task: " + config[KEY_INCREMENT]
+	$Menu/ScrollContainer/VBoxContainer/Keybinds/VBoxContainer/RemoveTask.text = "Remove task: " + config[KEY_DECREMENT]
 	
 	### Sounds
 	AudioServer.set_bus_volume_db(0, config[SOUND_VOLUME])
@@ -231,7 +230,7 @@ func file_button(btn: Button, cfg: String, dialog: FileDialog):
 
 
 func _ready() -> void:
-	for k in [KEY_MENU, KEY_PAUSE, KEY_EXIT, KEY_DECREMENT, KEY_INCREMENT]:
+	for k in [KEY_MENU, KEY_PAUSE, KEY_DECREMENT, KEY_INCREMENT]:
 		pressed_time[k] = -1
 		held_key[k] = false
 	
@@ -305,7 +304,7 @@ var pressed_time := {}
 var held_key := {}
 
 func pressed(event: InputEvent, key: String) -> bool:
-	var b : bool = event.is_pressed() and event is InputEventKey and event.physical_keycode == config[key]
+	var b : bool = event.is_pressed() and event is InputEventKey and event.keycode == OS.find_keycode_from_string(config[key])
 	if b:
 		if pressed_time[key] == -1:
 			pressed_time[key] = Engine.get_physics_frames()
@@ -322,11 +321,10 @@ func held(key: String):
 
 func _input(event: InputEvent):
 	if $Menu/PressKey.visible and event.is_pressed() and event is InputEventKey:
-		set_config(expected_key, event.physical_keycode)
+		set_config(expected_key, event.as_text_keycode())
 		$Menu/PressKey.hide()
 		return
 	
-	if pressed(event, KEY_EXIT): $Menu.visible = false
 	if pressed(event, KEY_MENU): $Menu.visible = !$Menu.visible
 	if pressed(event, KEY_PAUSE):
 		pause_timer()
